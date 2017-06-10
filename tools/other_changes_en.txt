@@ -1,0 +1,5 @@
+37	620367161	1	0	0	[<PAColor0xFFFFBB00>{name}<PAOldColor> <PAColor0xFF12EAFF>{count}개<PAOldColor>] 를 생산했습니다.	You have produced [ <PAColor0xFF12EAFF>{count}<PAOldColor> <PAColor0xFFFFBB00>{name}<PAOldColor> ].	Current	
+37	1789373289	1	0	0	[ {strParam1} ] 아이템이 판매되었습니다.	[ <PAColor0xFFFFBB00>{strParam1}<PAOldColor> ] has been sold.	Current	
+37	-1226318922	1	0	0	[ {strParam1} ] 아이템이 [ {param1}개 ] 판매되었습니다.	[ <PAColor0xFF12EAFF>{param1}<PAOldColor> <PAColor0xFFFFBB00>{strParam1}<PAOldColor> ] have been sold.	Current	
+37	1509486054	1	0	0	마시장에 등록하신 [ {servantName} ]의 판매가 완료되었습니다.	[ <PAColor0xFFFFBB00>{servantName}<PAOldColor> ] has been sold at the Horse Market.	Current	
+37	98405410	1	0	0	교배시장에 등록하신 [ {servantName} ]의 교배가 시작되었습니다.	[ <PAColor0xFFFFBB00>{servantName}<PAOldColor> ]'s breeding has started at the Breeding Market.	Current	

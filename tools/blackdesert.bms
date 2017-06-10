@@ -1,0 +1,221 @@
+# Black Desert (script 0.2.3) by BlackFire
+#  This is a modified version of the original script found at
+#  http://aluigi.altervista.org/bms/blackdesert.bms
+#  That makes the script jumps over the 256000 bytes they added in the meta file, after a patch in june.
+# For a visual guide on how the .meta and .PAZ file is sctructured, see this thread:
+# https://www.undertow.club/posts/129716
+# If you are using Notepad++, change the Language to "Visual Basic" to get a nice color code
+
+quickbmsver "0.7.4"
+comtype blackdesert # Defines the compression type that will be used, when extracting a file
+
+get EXT extension  # gets the extension of the opened file
+
+
+if EXT == "meta" #If the file extension is .meta
+
+    # pre-allocation, improves speed (doesn't matter if the values are bigger)
+    putarray 0 0x4000  ""   # Array that is going to store the PAZs names
+    putarray 1 0x2000  ""   # Array that is going to store the folder names
+    putarray 2 0x80000 ""   # Array that is going to store the file names
+
+    get DUMMY long		# Reads the first 4 bytes (long) of the meta file and stores it in the variable DUMMY. # In C: fread(&dummy,sizeof(long),1,metaFile);
+    get pPAZCount long  # Reads how many PAZ files your game has. # In C: fread(&pPAZCount,sizeof(long),1,metaFile);
+	print "pPAZCount: %pPAZCount%"
+	
+	# Paz files informations
+    for i = 0 < pPAZCount 
+        get PAZ_NUM long 	
+        get HASH long	 	
+        get PAZ_SIZE long 	
+		
+        string PAZ_NAME p= "PAD%05d.PAZ" PAZ_NUM # Using the number stored in PAZ_NUM with 5 digits,creates a string that will hold the complete .PAZ file name (E.g.:PAD00001.PAZ) # In C: sprintf(paz_name,"PAD%.5d.PAZ",paz_num);
+        putarray 0 PAZ_NUM PAZ_NAME				 # Stores in the array 0 in the position [PAZ_NUM], the string we just created # In C: array0[paz_num] = paz_name;
+    next i
+
+    get FILES_COUNT long # Reads how many files your game has. # In C: fread(&files_count,sizeof(long),1,metaFile)	
+	print "FILES_COUNT: %FILES_COUNT%"
+
+    savepos BLOCK_256K_START 							# Saves the current position in the file in a variable. This position is the beginning of a block of 256000 bytes that we need to skip. # In C: long block_256k_start = ftell(metafile);
+	print "BLOCK_256K_START: %BLOCK_256K_START%"
+	
+    xmath BLOCK_256K_END "BLOCK_256K_START + 256000" 	# Calculates the byte that the 256000 bytes end # In C: long block_256k_end = block_256k_start + 256000;
+	print "BLOCK_256K_END: %BLOCK_256K_END%"
+	
+    goto BLOCK_256K_END									# Skips the 256000 bytes # In C: fseek(metaFile,block_256k_end,SEEK_SET);
+
+	
+	xmath FILE_BLOCKS_COUNT  "FILES_COUNT - 8000"		# Counter of how many of those blocks we have # In C: long file_blocks_count = file_count - 8000;
+	print "FILE_BLOCKS_COUNT: %FILE_BLOCKS_COUNT%"
+	
+    savepos FILE_BLOCKS_START		# Saves the current position in the file in a variable. This position is the beginning of the blocks that have the following format: HASH|FOLDER_NUM|FILE_NUM|PAZ_NUM|OFFSET|ZSIZE|SIZE # # In C: long file_blocks_start = ftell(metafile);
+	print "FILE_BLOCKS_START: %FILE_BLOCKS_START%"
+	    
+	savepos CURRENT_POS	# This position should be 28 bytes after the end of the fileblocks, because it read a whole file block before the while checked if it was valid
+	
+	xmath FILE_BLOCKS_END "FILE_BLOCKS_START + (FILE_BLOCKS_COUNT * 28)" # Calculates the position where the file blocks ends #
+	print "FILE_BLOCKS_END: %FILE_BLOCKS_END%"
+	
+	goto FILE_BLOCKS_END
+	
+    get FOLDER_NAMES_TOTAL_LENGTH long	# Gets the total length of the strings that are comming next, that are the folder names strings # In C: fread(&folder_names_total_length,sizeof(long),1,metaFile); 
+	print "FOLDER_NAMES_TOTAL_LENGTH: %FOLDER_NAMES_TOTAL_LENGTH%"
+	
+    savepos FOLDER_NAMES_START			# Saves the position where the folder names strings start # In C: long folder_names_start = ftell(fp);
+	print "FOLDER_NAMES_START: %FOLDER_NAMES_START%"
+
+    callfunction SET_ENCRYPTION 1									# Decrypts the folder names that are going to be read next
+    log MEMORY_FILE FOLDER_NAMES_START FOLDER_NAMES_TOTAL_LENGTH 	# Saves all the next "FOLDER_NAMES_TOTAL_LENGTH" bytes, starting from the offset "FOLDER_NAMES_START" in a temporary memory called MEMORY_FILE # In C: fread(memory_file,1,folder_names_total_length,metaFile);
+    encryption "" ""												# Tells the program to stop decrypting stuff for now
+
+    xmath FOLDER_NAMES_END "FOLDER_NAMES_START + FOLDER_NAMES_TOTAL_LENGTH" 	# Calculates which byte the folder names strings end # In C: long folder_names_end = folder_names_start + folders_name_total_length;
+	print "FOLDER_NAMES_END: %FOLDER_NAMES_END%"
+	
+    goto FOLDER_NAMES_END 														# Goes to that position # In C: fseek(metaFile,folder_names_end,SEEK_SET);
+
+    get FILE_NAMES_TOTAL_LENGTH long # Gets the total length of the strings that are comming next, that are the file names strings # In C: fread(&file_names_total_length,sizeof(long),1,metaFile); 
+	print "FILE_NAMES_TOTAL_LENGTH: %FILE_NAMES_TOTAL_LENGTH%"
+	
+    savepos FILE_NAMES_START		 # Saves the position where the file names strings start # In C: long file_names_start = ftell(fp);
+	print "FILE_NAMES_START: %FILE_NAMES_START%"
+	
+    callfunction SET_ENCRYPTION 1								# Decrypts the folder names that are going to be read next
+    log MEMORY_FILE2 FILE_NAMES_START FILE_NAMES_TOTAL_LENGTH	# Saves all the next "FILE_NAMES_TOTAL_LENGTH" bytes, starting from the offset "FILE_NAMES_START" in a temporary memory called MEMORY_FILE2 # In C: fread(memory_file2,1,file_names_total_length,metaFile);
+    encryption "" ""											# Tells the program to stop decrypting stuff for now
+
+    math FOLDER_NAMES_TOTAL_LENGTH -= 8  # Don't know why, but it ignores the last 8 bytes of the folder names string (2 irrelevent longs, maybe?)
+ 
+	# Reads the string which has all the folder names, assigning each folder name to a different position in the array 1 (folders array)
+	print "Collecting folder names..."
+	math i = 0
+    for TMP = 0 < FOLDER_NAMES_TOTAL_LENGTH
+        get INDEX_NUM long MEMORY_FILE      # Reads from the MEMORY_FILE the the index number of the current folder 
+        get SUB_FOLDERS long MEMORY_FILE	# Reads from the MEMORY_FILE the number of subfolder of the current folder
+        get FOLDER_NAME string MEMORY_FILE	# Reads from the MEMORY_FILE a folder name, as string, until a '\0' is found. E.g: "character/"
+		
+		if FOLDER_NAME == "" # If no name was read, means that we reached the end of the folder names
+            break
+        endif
+		
+        putarray 1 i FOLDER_NAME	# Stores the folder name, in the position i of the array 1 (folders array) # In C: array1[i] = folder_name;	
+		
+		savepos TMP MEMORY_FILE
+    next i
+	
+	print "Collecting file names..."
+	math i = 0
+    # Reads the string which has all the file names, assigning each file name to a different position in the array 2 (files array)
+    for TMP = 0 < FILE_NAMES_TOTAL_LENGTH
+	
+        get FILE_NAME string MEMORY_FILE2 		# Reads from the MEMORY_FILE a file name, as string, until a '\0' is found.
+
+        if FILE_NAME == ""	# If no name was read, means that we reached the end of the file names
+            break
+        endif
+		
+        putarray 2 i FILE_NAME	# Stores the folder name, in the position i of the array 1 (folders array) # In C: array1[i] = file_name;	
+		savepos TMP MEMORY_FILE2
+    next i
+	
+
+
+	# Now we are going to extract the files, combining the information we find in the file blocks, with the arrays filled with the file and folder names
+    goto FILE_BLOCKS_START			# Goes back to the beginning of the file blocks
+    for i = 0 < FILE_BLOCKS_COUNT	# For all file blocks
+        get HASH long 		# The unique indentifier of this file
+        get FOLDER_NUM long	# The index in the array 1 (folders array) which has the folder name from this file
+        get FILE_NUM long	# The index in the array 2 (files array) which has the file name from this file
+        get PAZ_NUM long 	# The number of the .PAZ file that the file is located
+        get OFFSET long 	# The offset inside the .PAZ file specified which the file starts
+        get ZSIZE long		# The compressed size of the file
+        get SIZE long		# The uncompressed size of the file
+
+        getarray PAZ_NAME 0 PAZ_NUM			# Gets the PAZ name at the position [PAZ_NUM] of the array 0 (PAZ names array) and stores is in the PAZ_NAME variable 			# In C: paz_name 	= array0[paz_num];
+        getarray FOLDER_NAME 1 FOLDER_NUM	# Gets the folder name at the position [FOLDER_NUM] of the array 1 (folders array) and stores is in the FOLDER_NAME variable 	# In C: folder_name = array1[paz_num];
+        getarray FILE_NAME 2 FILE_NUM		# Gets the file name at the position [FILE_NUM] of the array 1 (folders array) and stores is in the FILE_NAME variable 			# In C: file_name 	= array2[paz_num];
+        string FILE_PATH = FOLDER_NAME 
+		string FILE_PATH += FILE_NAME # Creates a string and concatenates folder name with the file name strings, so we get the full path to the file. Eg: "character/multiplemodeldesc.xml"			
+		
+        open FDSE PAZ_NAME 1	# Open the .PAZ file specified in the PAZ_NAME variable
+		
+		print "\n[FOLDER NAME]: %FOLDER_NAME%\n[ FILE_NAME ]: %FILE_NAME%\n  HASH   |FOLDER_NUM|FILE_NUM|PAZ_NUM| OFFSET|ZSIZE|SIZE\n%HASH%|   %FOLDER_NUM%   | %FILE_NUM% |  %PAZ_NUM% |%OFFSET%|%ZSIZE%|%SIZE%"
+
+		callfunction SET_ENCRYPTION 1
+		
+		# If uncompressed size is greater than compressed size, it means that the file is compressed, so we use "clog" which uncompresses and extracts the file
+        if SIZE > ZSIZE	
+		
+		# Uncompress and extracts the file and saves it just like is specified in "FILE_PATH", OFFSET is what byte of the .PAZ file the file starts, ZSIZE is the compressed size and SIZE is the uncompressed size, this uses the compression algothithm defined with the "comtype" command
+            clog FILE_PATH OFFSET ZSIZE SIZE 1	
+			
+        else  # If uncompressed size is lesser or equal than compressed size, it means that the file is NOT compressed, so we use "log" which just extracts the file 
+		
+		# Simply extracts the file and saves it just like is specified in "FILE_PATH", OFFSET is what byte of the .PAZ file the file start and SIZE is the file size
+            log FILE_PATH OFFSET SIZE 1
+        endif
+		encryption "" ""
+    
+		print ""
+		xmath PERCENTAGE "i*100/FILE_BLOCKS_COUNT"
+		print "Files Extracted: %i%/%FILE_BLOCKS_COUNT% (%PERCENTAGE% Percent Completed)"
+    next i
+
+
+else if EXT == "PAZ"  #If the file extension is .PAZ
+
+    get DUMMY long			# Reads the first 4 bytes (long) of the meta file and stores it in the variable DUMMY. # In C: fread(&dummy,sizeof(long),1,metaFile);
+    get TOTAL_FILES long	# Reads how many files this .PAZ file has. # In C: fread(&paz_files,sizeof(long),1,metaFile);
+    get FILE_PATHS_TOTAL_LENGTH long 	# Gets the total length of the strings that are the folder names and file names like this "character/multiplemodeldesc.xml"
+
+    savepos FILE_BLOCKS_START	# Saves the current file's position, which is where the file blocks start # In C: long file_paths_start = ftell(file);
+    xmath FILE_BLOCKS_END "FILE_BLOCKS_START + (TOTAL_FILES * 4 * 6)"	# Calculates the position where the file blocks end and it's where the file paths start
+    callfunction SET_ENCRYPTION 1										# Decrypts the what is going to be read next			
+    log MEMORY_FILE FILE_BLOCKS_END FILE_PATHS_TOTAL_LENGTH				# Starting for the offset where the file blocks end, it reads the next "FILE_PATHS_TOTAL_LENGTH" bytes and stores them in the MEMORY_FILE file # In C: fread(MEMORY_FILE,1,FILE_PATHS_TOTAL_LENGTH,file);
+    encryption "" ""													# Tells the program to stop decrypting stuff for now
+
+	# Reads the bytes which has all the file paths, assigning each folder name to a different position in the array 0
+    math i = 0
+    for TMP = 0 < FILE_PATHS_TOTAL_LENGTH
+        get FILE_PATH string MEMORY_FILE # Reads from the MEMORY_FILE a file path, as string, until a '\0' is found. E.g: "character/"
+		
+        if FILE_PATH == "" # If nothing was read, means that we reached the end of the file paths
+            break
+        endif
+		
+        putarray 0 i FILE_PATH # Stores the folder name, in the position i of the array 0  # In C: array0[i] = file_path;	
+		savepos TMP MEMORY_FILE
+    next i
+
+    for i = 0 < TOTAL_FILES
+        get HASH long 		# The unique indentifier of this file
+        get FOLDER_NUM long	# The index in the array 0  which has the folder name from this file
+        get FILE_NUM long	# The index in the array 0  which has the file name from this file        
+        get OFFSET long 	# The offset inside the .PAZ file specified which the file starts
+        get ZSIZE long		# The compressed size of the file
+        get SIZE long		# The uncompressed size of the file
+
+        getarray FOLDER_NAME 0 FOLDER_NUM	# Gets the folder name at the position [FOLDER_NUM] of the array 1 (folders array) and stores is in the FOLDER_NAME variable 	# In C: folder_name = array1[paz_num];
+        getarray TMP 0 FILE_NUM		# Gets the file name at the position [FILE_NUM] of the array 1 (folders array) and stores is in the FILE_NAME variable 			# In C: file_name 	= array2[paz_num];
+        string FILE_PATH = FOLDER_NAME 
+		string FILE_PATH += TMP # Creates a string and concatenates folder name with the file name strings, so we get the full path to the file. Eg: "character/multiplemodeldesc.xml"			
+		
+		#print "\n[FOLDER NAME]: %FOLDER_NAME%\n[ FILE_NAME ]: %TMP%\n  HASH   |FOLDER_NUM|FILE_NUM| OFFSET|ZSIZE|SIZE\n%HASH%|   %FOLDER_NUM%   | %FILE_NUM% |%OFFSET%|%ZSIZE%|%SIZE%"
+		
+		callfunction SET_ENCRYPTION 1
+		# If uncompressed size is greater than compressed size, it means that the file is compressed, so we use "clog" which uncompresses and extracts the file
+        if SIZE > ZSIZE	
+		# Uncompress and extracts the file and saves it just like is specified in "FILE_FULL_PATH", OFFSET is what byte of the .PAZ file the file starts, ZSIZE is the compressed size and SIZE is the uncompressed size, this uses the compression algothithm defined with the "comtype" command
+            clog FILE_PATH OFFSET ZSIZE SIZE	
+			
+        else  # If uncompressed size is lesser or equal than compressed size, it means that the file is NOT compressed, so we use "log" which just extracts the file 
+		# Simply extracts the file and saves it just like is specified in "FILE_FULL_PATH", OFFSET is what byte of the .PAZ file the file start and SIZE is the file size
+            log FILE_PATH OFFSET SIZE
+        endif
+		encryption "" ""
+
+    next i
+endif
+
+startfunction SET_ENCRYPTION
+        encryption ice "\x51\xF3\x0F\x11\x04\x24\x6A\x00"
+endfunction
