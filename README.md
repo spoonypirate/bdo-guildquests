@@ -1,5 +1,6 @@
 # bdo-guildquests
-> for v452 NA client
+> updated for v452 EN/DE/FR
+
 These files edit the guild mission text to take the randomness out of the whole thing. See preview1.png and preview2.png for examples
 
 ## Installation:
@@ -12,10 +13,10 @@ Uninstallation:
 - Run `meta_injector.exe` and use the  option, "*Restore Backup*"
 - (optional) Delete *BDO_FOLDER\\stringtable\\*.
 
-***WARNING***
-
-Make sure that you run `meta_injector.exe` and run the "*Restore Backup*" option ***every time before a patch is available***, otherwise you will get a "corrupted files" message from the launcher.
+> ***WARNING*** -  Make sure that you run `meta_injector.exe` and run the "*Restore Backup*" option ***every time before a patch is available***, otherwise you will get a "corrupted files" message from the launcher.
 If that happens, close the launcher, use the "*Restore a backup*" option, and open the launcher again.
+
+## Manual installation:
 
 If you don't want to wait on me and would rather update it yourself:
 - Download *QuickBMS* (http://quickbms.aluigi.org) and copy it to *BDO_FOLDER\\Paz\\*
