@@ -1,15 +1,18 @@
 # bdo-guildquests
+
 > updated for v452 EN/DE/FR
 
 These files edit the guild mission text to take the randomness out of the whole thing. See example1.png and example2.png for examples
 
 ## Installation:
-- Download Meta Injector (from https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract this tool to <game folder>\Paz\*.*
+
+- Download Meta Injector (from https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract the archive to *BDO_FOLDER\Paz\
 - Copy the *stringtable* folder to *BDO_FOLDER\\Paz\\files_to_patch\\*
 - Run `meta_injector.exe` and follow the screen instruction.
 - Run the game
 
 Uninstallation:
+
 - Run `meta_injector.exe` and use the  option, "*Restore Backup*"
 - (optional) Delete *BDO_FOLDER\\stringtable\\*.
 
@@ -20,9 +23,10 @@ If that happens, close the launcher, use the "*Restore a backup*" option, and op
 
 If you don't want to wait on me and would rather update it yourself:
 >This assumes you have Notepad++ installed
+
 - Download *QuickBMS* (http://quickbms.aluigi.org) and copy it to *BDO_FOLDER\\Paz\\*
 - Open `extractLangData.cmd` and change the following:
-  - line 2: `SET bdowd=path\where\you\unzipped\this\repo\ `
+  - line 2: `SET bdowd=path\where\you\unzipped\this\repo\`
   > if you only want to mess with a particular language, remove the lines that don't deal with your language, for example for `en` only remove lines `8,9,13,14,16,17`
 - Open `tools\startpatch.cmd` and change the following:
   - line 2: `SET paz="path\to\black desert\paz"`
