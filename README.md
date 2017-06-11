@@ -1,7 +1,7 @@
 # bdo-guildquests
 > updated for v452 EN/DE/FR
 
-These files edit the guild mission text to take the randomness out of the whole thing. See preview1.png and preview2.png for examples
+These files edit the guild mission text to take the randomness out of the whole thing. See example1.png and example2.png for examples
 
 ## Installation:
 - Download Meta Injector (from https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract this tool to <game folder>\Paz\*.*
@@ -16,12 +16,21 @@ Uninstallation:
 > ***WARNING*** -  Make sure that you run `meta_injector.exe` and run the "*Restore Backup*" option ***every time before a patch is available***, otherwise you will get a "corrupted files" message from the launcher.
 If that happens, close the launcher, use the "*Restore a backup*" option, and open the launcher again.
 
-## Manual installation:
+## Manual updates:
 
 If you don't want to wait on me and would rather update it yourself:
+>This assumes you have Notepad++ installed
 - Download *QuickBMS* (http://quickbms.aluigi.org) and copy it to *BDO_FOLDER\\Paz\\*
-- Copy `extractLangData.cmd` and `blackdesert.bms` to *BDO_FOLDER\\Paz\\*
-- Run `extractLangData.cmd`. It will extract language data to *Extracted\\stringtable\\??\\*
-- Open `languagedata_??.txt` and search for (regex) ^27, which should get you to the start of the guild quests (line 333,000 or so)
-- Replace all lines starting with 27 with the contents of `guild_quest_list_??.txt`.
-- Save the modified `languagedata_??.txt`, copy the *stringtable* folder the file was in to *BDO_FOLDER\Paz\files_to_patch*  and install it using `meta_injector.exe` 
+- Open `extractLangData.cmd` and change the following:
+  - line 2: `SET bdowd=path\where\you\unzipped\this\repo\ `
+  > if you only want to mess with a particular language, remove the lines that don't deal with your language, for example for `en` only remove lines `8,9,13,14,16,17`
+- Open `tools\startpatch.cmd` and change the following:
+  - line 2: `SET paz="path\to\black desert\paz"`
+  - line 3: `SET lang=YOURLANG` (en/de/fr)
+  - line 6: set to BDO drive if this folder and BDO are different, remove if they are the same.
+- Copy `tools\extractLangData.cmd` and `tools\blackdesert.bms` to *BDO_FOLDER\\Paz\\*
+- Run `extractLangData.cmd` from your *BDO_FOLDER\Paz* folder. It will extract language data to what you set `BDOWD` to, open said folder, and open `Notepad++` with all relevant files.
+- In each `languagedata_LANG.txt` you want to edit, regex search for `^27`, which should get you to the start of the guild quests
+  > These start at line 333,000 or so, I got you close with `notepad++` already with the `-n333000` switch in `extractLangData.cmd`
+- Replace all lines starting with `27` with the contents of `guild_quest_list_LANG.txt`.
+- Save the modified `languagedata_LANG.txt`, and run `tools\startpatch.cmd`, which will copy the updated file to *BDO_FOLDER\\Paz\\files_to_patch\\* and run `meta_injector.exe` for you.
