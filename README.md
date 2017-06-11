@@ -12,7 +12,7 @@ Client-side patching has been done for Black Desert by many people since Korean 
 
 ## Installation
 
-- Download Meta Injector (from https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract the archive to *BDO_FOLDER\\Paz\\*
+- [Download Meta Injector](https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract the archive to *BDO_FOLDER\\Paz\\*
 - Copy the *stringtable* folder to *BDO_FOLDER\\Paz\\files_to_patch\\*
 - Run `meta_injector.exe` and follow the instructions.
 - Run the game
@@ -30,7 +30,7 @@ If that happens, close the launcher, use the "*Restore a backup*" option, and op
 If you don't want to wait on me and would rather update it yourself:
 >This assumes you have Notepad++ installed
 
-- Download *QuickBMS* (http://quickbms.aluigi.org) and copy it to *BDO_FOLDER\\Paz\\*
+- Download *QuickBMS* (http://quickbms.aluigi.org) and copy it to *BDO_FOLDER\\Paz\\patcher_resources\\*
 - Open `extractLangData.cmd` and change the following:
   - line 2: `SET bdowd=path\where\you\unzipped\this\repo\`
   > if you only want to mess with a particular language, remove the lines that don't deal with your language, for example for `en` only remove lines `8,9,13,14,16,17`
@@ -38,8 +38,8 @@ If you don't want to wait on me and would rather update it yourself:
   - line 2: `SET paz="path\to\black desert\paz"`
   - line 3: `SET lang=YOURLANG` (en/de/fr)
   - line 6: set to BDO drive if this folder and BDO are different, remove if they are the same.
-- Copy `tools\extractLangData.cmd` and `tools\blackdesert.bms` to *BDO_FOLDER\\Paz\\*
-- Run `extractLangData.cmd` from your *BDO_FOLDER\Paz* folder. It will extract language data to what you set `BDOWD` to, open said folder, and open `Notepad++` with all relevant files.
+- Copy `tools\extractLangData.cmd` and `tools\blackdesert.bms` to *BDO_FOLDER\\Paz\\patcher_resources\\*
+- Run `extractLangData.cmd` from your *BDO_FOLDER\\Paz\\patcher_resources\\* folder. It will extract language data to what you set `BDOWD` to, open said folder, and open `Notepad++` with all relevant files.
 - In each `languagedata_LANG.txt` you want to edit, regex search for `^27`, which should get you to the start of the guild quests
   > These start at line 333,000 or so, I got you close with `notepad++` already with the `-n333000` switch in `extractLangData.cmd`
 - Replace all lines starting with `27` with the contents of `guild_quest_list_LANG.txt`.
