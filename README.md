@@ -2,7 +2,13 @@
 
 > updated for v452 EN/DE/FR
 
+## What is this?
+
 These files edit the guild mission text to take the randomness out of the whole thing. See example1.png and example2.png for examples
+
+## Can I be banned for this?
+
+Client-side patching has been done for Black Desert by many people since Korean beta. Provided you don't put screenshots of this on the official forums or go shouting in game that you've done this, you're fine.
 
 ## Installation:
 
@@ -11,7 +17,7 @@ These files edit the guild mission text to take the randomness out of the whole 
 - Run `meta_injector.exe` and follow the screen instruction.
 - Run the game
 
-Uninstallation:
+## Uninstallation:
 
 - Run `meta_injector.exe` and use the  option, "*Restore Backup*"
 - (optional) Delete *BDO_FOLDER\\stringtable\\*.
