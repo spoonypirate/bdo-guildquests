@@ -10,22 +10,22 @@ These files edit the guild mission text to take the randomness out of the whole 
 
 Client-side patching has been done for Black Desert by many people since Korean beta. Provided you don't put screenshots of this on the official forums or go shouting in game that you've done this, you're fine.
 
-## Installation:
+## Installation
 
 - Download Meta Injector (from https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract the archive to *BDO_FOLDER\\Paz\\*
 - Copy the *stringtable* folder to *BDO_FOLDER\\Paz\\files_to_patch\\*
-- Run `meta_injector.exe` and follow the screen instruction.
+- Run `meta_injector.exe` and follow the instructions.
 - Run the game
 
-## Uninstallation:
+## Uninstallation
 
+> This first step MUST be done prior to new patches releasing
 - Run `meta_injector.exe` and use the  option, "*Restore Backup*"
 - (optional) Delete *BDO_FOLDER\\stringtable\\*.
-
 > ***WARNING*** -  Make sure that you run `meta_injector.exe` and run the "*Restore Backup*" option ***every time before a patch is available***, otherwise you will get a "corrupted files" message from the launcher.
 If that happens, close the launcher, use the "*Restore a backup*" option, and open the launcher again.
 
-## Manual updates:
+## Manual updates
 
 If you don't want to wait on me and would rather update it yourself:
 >This assumes you have Notepad++ installed
