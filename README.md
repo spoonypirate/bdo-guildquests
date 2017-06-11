@@ -12,7 +12,7 @@ Client-side patching has been done for Black Desert by many people since Korean 
 
 ## Installation:
 
-- Download Meta Injector (from https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract the archive to *BDO_FOLDER\Paz\
+- Download Meta Injector (from https://www.undertow.club/threads/black-desert-online-modding-tools.9197/) and extract the archive to *BDO_FOLDER\\Paz\\*
 - Copy the *stringtable* folder to *BDO_FOLDER\\Paz\\files_to_patch\\*
 - Run `meta_injector.exe` and follow the screen instruction.
 - Run the game
