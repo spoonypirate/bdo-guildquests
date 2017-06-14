@@ -1,6 +1,6 @@
 # bdo-guildquests
 
-> updated for v452 EN/DE/FR
+> updated for v457 EN/DE/FR
 
 ## What is this?
 
