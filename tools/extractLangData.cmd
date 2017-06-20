@@ -4,9 +4,9 @@ SET ext=%bdowd%\stringtable
 SET f1=languagedata
 SET f2=guild_quest_list
 SET npp="C:\Program Files\Notepad++\"
-quickbms.exe -f "*%f1%_en.txt" -o -Y blackdesert.bms ..\PAD05388.PAZ %bdowd%\en\
-quickbms.exe -f "*%f1%_de.txt" -o -Y blackdesert.bms ..\PAD03774.PAZ %bdowd%\de\
-quickbms.exe -f "*%f1%_fr.txt" -o -Y blackdesert.bms ..\PAD05389.PAZ %bdowd%\fr\
+quickbms.exe -f "*%f1%_en.txt" -o -Y blackdesert.bms ..\PAD05388.PAZ %bdowd%
+quickbms.exe -f "*%f1%_de.txt" -o -Y blackdesert.bms ..\PAD03774.PAZ %bdowd%
+quickbms.exe -f "*%f1%_fr.txt" -o -Y blackdesert.bms ..\PAD05389.PAZ %bdowd%
 explorer %bdowd%
 cd %npp%
 start Notepad++.exe -n333035 %ext%\en\%f1%_en.txt
